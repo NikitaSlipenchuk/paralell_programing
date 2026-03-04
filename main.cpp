@@ -7,7 +7,7 @@ using namespace std;
 
 int main() {
 	cout << "Lab1 Slipenchuk Nikita 6212-100503D";
-	int n = 200;
+	int n = 2000;
 	ofstream infile,outfile ;
 	infile.open("input.txt");
 	outfile.open("output.txt");
