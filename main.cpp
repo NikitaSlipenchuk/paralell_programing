@@ -20,7 +20,8 @@ int main() {
 	lhs = lhs * rhs;
 	auto end = std::chrono::steady_clock::now();
 	outfile << lhs;
-	outfile << "time:"<<end-start<<"\n";
+	auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+	outfile << "time: " << duration.count() << " ms\n";
 	outfile << "size:" << n*n;
 	int code = system("python check.py");
 	if (code == 1) {

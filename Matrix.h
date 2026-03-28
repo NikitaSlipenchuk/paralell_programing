@@ -6,6 +6,7 @@
 #include <random>
 #include <stdexcept>
 #include <complex>
+#include <omp.h>
 
 using namespace std;
 
@@ -230,20 +231,23 @@ public:
     return trace;
   }
 
-
   Matrix operator*(const Matrix& rhs) const {
-    if (_columns != rhs._lines) {
-      throw invalid_argument("Uncorrect size of matrix for multiply");
-    }
-    Matrix<T>result(_lines, rhs._columns, 0);
-    for (size_t i = 0; i < _lines; i++) {
-      for (size_t j = 0; j < rhs._columns; j++) {
-        for (size_t k = 0; k < _columns; k++) {
-          result(i, j) += this->operator()(i, k) * rhs(k, j);
-        }
+      if (_columns != rhs._lines) {
+          throw invalid_argument("Uncorrect size of matrix for multiply");
       }
-    }
-    return result;
+      Matrix<T> result(_lines, rhs._columns, 0);
+
+#pragma omp parallel for num_threads(8)
+      for (size_t i = 0; i < _lines; i++) {
+          for (size_t j = 0; j < rhs._columns; j++) {
+              T sum = 0; 
+              for (size_t k = 0; k < _columns; k++) {
+                  sum += this->operator()(i, k) * rhs(k, j);
+              }
+              result(i, j) = sum; 
+          }
+      }
+      return result;
   }
 
 
