@@ -237,11 +237,11 @@ public:
       }
       Matrix<T> result(_lines, rhs._columns, 0);
 
-#pragma omp parallel for num_threads(8)
-      for (size_t i = 0; i < _lines; i++) {
-          for (size_t j = 0; j < rhs._columns; j++) {
+#pragma omp parallel for collapse(2) num_threads(8)
+      for (int i = 0; i < _lines; i++) {
+          for (int j = 0; j < rhs._columns; j++) {
               T sum = 0; 
-              for (size_t k = 0; k < _columns; k++) {
+              for (int k = 0; k < _columns; k++) {
                   sum += this->operator()(i, k) * rhs(k, j);
               }
               result(i, j) = sum; 
